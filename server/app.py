@@ -3,13 +3,12 @@ import os
 
 import jsonlines
 import numpy as np
-import openai
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
-openai.api_base = "https://api.openai.com/v1"
-EMBEDDING_MODEL = "text-embedding-ada-002"
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 SERVER_DIR = os.path.dirname(os.path.abspath(__file__))
 EMBED_FILE = os.path.join(SERVER_DIR, "emoji-embeddings.jsonl.gz")
@@ -45,8 +44,11 @@ class EmojiSearchApp:
         return self._embeddings
 
     def get_openai_embedding(self, text: str) -> list[float]:
-        result = openai.Embedding.create(input=text, model=EMBEDDING_MODEL)
-        return result["data"][0]["embedding"]
+        # result = openai.Embedding.create(input=text, model=EMBEDDING_MODEL)
+        print(text)
+        result = model.encode([text])
+        print(result)
+        return result[0].tolist()
 
     def get_top_relevant_emojis(self, query: str, k: int = 20) -> list[dict]:
         query_embed = self.get_openai_embedding(query)
@@ -74,6 +76,7 @@ def search():
     error = None
     result = []
 
+    # query = request.args.get('query')s
     query = request.get_json().get("query")
     try:
         result = emoji_search_app.get_top_relevant_emojis(query, k=20)

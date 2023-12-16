@@ -12,7 +12,6 @@ Jinja2==2.11.3
 jsonlines==1.2.0
 MarkupSafe==2.0.1
 numpy==1.21.0
-openai==0.13.0
 openpyxl==3.0.9
 pandas==1.4.0
 pandas-stubs==1.2.0.45
