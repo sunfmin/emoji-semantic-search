@@ -1,29 +1,24 @@
 # Emoji Semantic Search
 
-## Screenshot
-
-The app is currently running at [emojisearch.app](https://www.emojisearch.app/)
-
-<img width="955" alt="image" src="https://user-images.githubusercontent.com/901179/154786556-6acec72d-6a6c-4242-9449-db84fddb8d97.png">
-
+This version uses https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2 to generate vectors, and for search
 
 ## Local test
 
-Get your OpenAI API key at [https://openai.com/api/](https://openai.com/api/).
-
 Build embedding index:
 ```bash
-OPENAI_API_KEY={api_key} python server/data/build.py
+python server/data/build.py
 ```
 
 Start backend:
 ```bash
-OPENAI_API_KEY={api_key} python server/app.py
+python server/app.py
 ```
 
 Start frontend
 ```bash
 cd client
 npm install  # Run once
-REACT_APP_SERVER_ADDRESS="http://localhost:5000" npm start
+REACT_APP_SERVER_ADDRESS="http://localhost:8012" npm start
 ```
+
+Changes to 8012 because seems default 5000 port is used by System AirPlay or something.

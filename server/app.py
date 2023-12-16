@@ -6,7 +6,8 @@ import numpy as np
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 from sentence_transformers import SentenceTransformer
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
@@ -50,7 +51,7 @@ class EmojiSearchApp:
         print(result)
         return result[0].tolist()
 
-    def get_top_relevant_emojis(self, query: str, k: int = 20) -> list[dict]:
+    def get_top_relevant_emojis(self, query: str, k: int = 50) -> list[dict]:
         query_embed = self.get_openai_embedding(query)
         dotprod = np.matmul(self.embeddings, np.array(query_embed).T)
         m_dotprod = np.median(dotprod)
@@ -69,7 +70,7 @@ class EmojiSearchApp:
 
 app = Flask(__name__)
 emoji_search_app = EmojiSearchApp()
-CORS(app, support_credentials=True)
+CORS(app)
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -79,7 +80,7 @@ def search():
     # query = request.args.get('query')s
     query = request.get_json().get("query")
     try:
-        result = emoji_search_app.get_top_relevant_emojis(query, k=20)
+        result = emoji_search_app.get_top_relevant_emojis(query, k=50)
     except Exception as err:
         error = str(err)
     return jsonify(error=error, result=result)
@@ -88,5 +89,5 @@ def search():
 def index():
     return 'Hello World!'
 
-app.run()
+app.run(debug=True, port=8012)
 
